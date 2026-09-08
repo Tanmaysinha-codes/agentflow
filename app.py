@@ -7,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import TypeVar
 
 import streamlit as st
-from google import genai
 
 from orchestrator.engine import AgentFlowEngine
 
@@ -28,7 +27,7 @@ def run_async(operation: Callable[[], Awaitable[T]]) -> T:
 
 
 def build_engine(api_key: str) -> AgentFlowEngine:
-    return AgentFlowEngine(genai.Client(api_key=api_key), model=MODEL_NAME)
+    return AgentFlowEngine(api_key=api_key, model=MODEL_NAME)
 
 
 def render_status(api_key: str | None) -> None:
@@ -117,18 +116,21 @@ def main() -> None:
     st.title("AgentFlow")
     st.caption("An ultra-low-latency agentic engine for structured extraction and tool orchestration.")
 
-    environment_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if environment_key:
-        st.session_state["gemini_api_key"] = environment_key
-    else:
+    with st.sidebar.expander("🔑 Authentication", expanded=True):
+        if "gemini_api_key" not in st.session_state:
+            st.session_state["gemini_api_key"] = os.getenv("GEMINI_API_KEY", "").strip()
         st.sidebar.text_input(
             "Gemini API key",
             type="password",
             key="gemini_api_key",
-            help="Used only for this Streamlit session.",
         )
+        st.sidebar.caption("Get a free key from Google AI Studio at aistudio.google.com.")
+    st.info("Your API key is held only in memory for this active session and is never logged or stored.")
     api_key = st.session_state.get("gemini_api_key", "").strip()
     render_status(api_key or None)
+    if not api_key:
+        st.warning("Enter your Gemini API key in the sidebar to continue.")
+        st.stop()
 
     st.divider()
     extraction_tab, orchestration_tab = st.tabs(

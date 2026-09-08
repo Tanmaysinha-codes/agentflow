@@ -31,11 +31,16 @@ class AgentFlowEngine:
 
     def __init__(
         self,
-        client: genai.Client,
+        client: genai.Client | None = None,
         *,
+        api_key: str | None = None,
         model: str = "gemini-2.5-flash",
         max_turns: int = 8,
     ) -> None:
+        if client is None:
+            if not api_key:
+                raise ValueError("Either client or api_key must be provided")
+            client = genai.Client(api_key=api_key)
         self.client = client
         self.model = model
         self.max_turns = max_turns
