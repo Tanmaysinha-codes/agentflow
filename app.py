@@ -60,8 +60,8 @@ def render_extraction() -> None:
         try:
             tasks = run_async(lambda: build_engine(api_key).extract_structured_tasks(source_text))
             st.session_state["extracted_tasks"] = [task.model_dump() for task in tasks]
-        except Exception as error:
-            st.error(f"Task extraction failed: {error}")
+        except Exception:
+            st.error("Task extraction failed. Please verify the input and try again.")
 
     if "extracted_tasks" in st.session_state:
         st.json(st.session_state["extracted_tasks"])
@@ -98,9 +98,9 @@ def render_orchestration() -> None:
         try:
             state = run_async(lambda: build_engine(api_key).run_orchestration_loop(prompt))
             st.session_state["workflow_state"] = state
-        except Exception as error:
+        except Exception:
             st.session_state.pop("workflow_state", None)
-            st.error(f"Orchestration failed: {error}")
+            st.error("Orchestration failed. Please retry with a simpler prompt.")
 
     state = st.session_state.get("workflow_state")
     if state is not None:

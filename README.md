@@ -20,6 +20,7 @@ AgentFlow is a Streamlit app for structured task extraction and tool orchestrati
    ```powershell
    pip install -r requirements.txt
    ```
+   Dependencies are version-pinned for deterministic and safer installs.
 
 3. Start the Streamlit app:
 
@@ -34,3 +35,8 @@ AgentFlow is a Streamlit app for structured task extraction and tool orchestrati
 ```powershell
 pytest
 ```
+
+## Security Notes
+
+- Do not commit real credentials. Keep API keys in environment variables (for example `GEMINI_API_KEY`) or local untracked secret files.
+- If a credential is ever committed (including in git history), rotate/revoke it immediately.

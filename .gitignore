@@ -2,5 +2,10 @@
 __pycache__/
 *.pyc
 .env
+.env.*
+.streamlit/secrets.toml
+*.pem
+*.key
+*.p12
 .pytest_cache/
 .vscode/
